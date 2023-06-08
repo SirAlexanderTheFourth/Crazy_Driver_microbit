@@ -4,6 +4,7 @@ import threading, queue
 import time
 import random
 import pygame
+import platform
 from pygame import mixer
 
 q = queue.Queue()
@@ -17,9 +18,17 @@ class Read_Microbit(threading.Thread):
         self._running = False
         
     def run(self):
-        #serial config
-        port = "COM25"
-        s = serial.Serial(port)
+        if platform.system() == 'Windows': #trova la porta corretta
+            for i in range(0,100):
+                try:
+                    port="COM"+str(i)
+                    s = serial.Serial(port)
+                except:
+                    pass
+        else:
+            #serial config
+            port = "COM29"
+            s = serial.Serial(port)
         s.baudrate = 115200
         while self._running:
             data = s.readline().decode() 
@@ -222,6 +231,5 @@ while not game_over:
 rm.terminate()
 rm.join()
 End()
-
 
 
